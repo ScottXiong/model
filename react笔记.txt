@@ -1,0 +1,506 @@
+为了支持es6语法需在sublime上装babel，还需右下角设置
++++++++++++++++++生成app++++++++++++++++++
+yarn global add create-react-app
+create-react-app my-app  //react项目不支持大写字母，如myApp is wrong
+cd my-app 
+yarn start
+官方的这种配置比较傻瓜式，但是如果自己要配置的话比较麻烦（好几百行，可读性不强），package.json里提供了提出webpack.config.js的脚本：
+yarn eject //生成在config目录里
+open .
+建议实际开发还是用我们自己搭建的模版
+git clone git@github.com:ScottXiong/React-tutorial.git
+cd React-tutorial
+yarn install
+yarn run build
+yarn run dev
+
+-----------------把tag 提交到远程-------------------------------
+git tag tag-initial
+git push origin tag-initial
+
+
+------------------------JSX语法:切记是以js语法解析jsx--------------------------------------
+需给sublime装一个babel插件
+
+**********************style***********************
+let style={
+	color:'red', 
+	fontSize:'30 px'//注意一点要打引号，驼峰
+}
+
+let jsx=<div className='jsx' style={style}>jsx...</div>
+ReactDOM.render(
+  jsx,
+  document.getElementById('app')
+);
+
+//sass
+body{
+	background: #ccc;
+	#app{
+	   font-size:40px;
+	   .jsx{
+	   	  color:blue;
+	   	  font-size:18px;;
+	   }
+	}
+}
+*****************************变量:{}是放js的，只要是js都要加{}**************************
+
+let name="scott";
+let flag=false;
+let names=['Timmy','John','Scott','Ivy','Judy']
+
+let jsx=(
+      <div>
+         {/*变量使用*/}
+         {<p>I am {name}</p>}
+         {/*变量判断*/}
+         {flag ?<p>I am {name}</p> : <p>I am not {name}</p>}
+         {/*数组循环*/}
+         {
+     	    names.map((name,index)=><p key={index}>Hello,I am {name}</p>)
+         }
+      </div>
+	)
+ReactDOM.render(
+  jsx,
+  document.getElementById('app')
+);
+
+*************************component************************************************
+let name=scott;
+function Componet(){
+  return  <h1>I am {name}</h1>
+}
+
+class Es6Component extends React.Component{
+  render(){
+    return <h1> I am Lucy</h1>
+  }
+}
+
+ReactDOM.render(
+  <div>
+    <Componet/>
+    <Es6Component/>
+  </div>,
+  document.getElementById('app')
+);
+-----------------sublime jsx自动补全配置---------------------------------------------------
+[
+    { "keys": ["super+shift+c"], "command": "duplicate_line" },
+    {
+      "keys": ["tab"], 
+      "command": "expand_abbreviation_by_tab",
+
+      // Extend Emmet to js & jsx
+      "context": [
+          {
+            "operand": "source.js",
+            "operator": "equal", 
+            "match_all": true, 
+            "key": "selector"
+          },
+
+          // run only if there's no selected text
+          {
+            "match_all": true, 
+            "key": "selection_empty"
+          },
+
+          // don't work if completion popup is visible and you
+          // want to insert completion with Tab. If you want to
+          // expand Emmet with Tab even if popup is visible -- 
+          // remove this section
+          {
+            "operand": false, 
+            "operator": "equal", 
+            "match_all": true, 
+            "key": "auto_complete_visible"
+          }
+        ]
+    }
+]
+-----------Sublime Text3关于react的插件——react语法提示&代码格式化-----------------
+https://www.jianshu.com/p/ecf6c802fdc5?open_source=weibo_search
+----------------------------------state----------------
+
+class Es6Component extends React.Component {
+    constructor(props) {
+      super(props)
+      this.state={
+        name:"Hank"
+      }
+    }
+    render() {
+        setTimeout(()=>{
+         this.setState({
+          name:"Judy"
+         })
+        },2000)
+        return <h1> I am {this.state.name}</h1>
+    }
+}
+
+ReactDOM.render(
+    <div>
+    <Componet/>
+    <Es6Component/>
+  </div>,
+    document.getElementById('app')
+);
+
+
+------------props将父组件数据传递给子组件-----------------
+props只读的，在子组件中只读，不能被改变
+class Es6Component extends React.Component {
+    constructor(props) {
+      super(props);
+     } 
+    render(){
+        return <h1> I am {this.props.description}</h1>
+    }
+}
+
+ReactDOM.render(
+       <Es6Component description="Jenny" />,
+    document.getElementById('app')
+);
+
+----------------event1---------------------
+class Es6Component extends React.Component {
+    constructor(props) {
+      super(props);
+      //state是个json，this.setState是个方法
+      this.state={
+        name:"Scott",
+        age:18
+      }
+      this.handleClick=this.handleClick.bind(this)//handleClick的this修正为Component的this
+     } 
+     handleClick(){
+      this.setState({
+        age:this.state.age+1
+      })
+     }
+    render(){
+        return （
+              <div>
+                   <h1> Hello, I am {this.state.name}, and I am {this.state.age} years old.</h1>
+                   <button onClick={this.handleClick}>click to add one year</button>
+              </div>
+        ）
+    }
+}
+ReactDOM.render(
+       <Es6Component/>,
+    document.getElementById('app')
+);
+
+---------------------------event2--------------
+我们发现每绑定一个事件就要早constructor里做一次绑定，这样写起来很麻烦
+由于肩头函数不改变作用域，那么可通过箭头函数修正作用域this
+class Es6Component extends React.Component {
+    constructor(props) {
+      super(props);
+      //state是个json，this.setState是个方法
+      this.state={
+        name:"Scott",
+        age:18
+      }
+     } 
+     handleClick(){
+      this.setState({
+        age:this.state.age+1
+      })
+     }
+    render(){
+        return (
+            <div>
+                   <h1> Hello, I am {this.state.name}, and I am {this.state.age} years old.</h1>
+                   <button onClick={(e)=>{this.handleClick(e)}}>click to add one year</button>
+            </div>
+        )
+    }
+}
+ReactDOM.render(
+       <Es6Component/>,
+    document.getElementById('app')
+);
+
+----------------input的onChange事件------------
+class Es6Component extends React.Component {
+    constructor(props) {
+      super(props);
+      //state是个json，this.setState是个方法
+      this.state={
+        name:"Scott",
+        age:18
+      }
+     } 
+     handleClick(){
+      this.setState({
+        age:this.state.age+1
+      })
+     }
+     onValueChange(e){
+      this.setState({
+        age: e.target.value
+      })
+     }
+    render(){
+        return (
+            <div>
+                   <h1> Hello, I am {this.state.name}, and I am {this.state.age} years old.</h1>
+                   <button onClick={(e)=>{this.handleClick(e)}}>click to add one year</button>
+                   <input type="text" onChange={(e)=>{this.onValueChange(e)}}/>
+            </div>
+        )
+    }
+}
+ReactDOM.render(
+       <Es6Component/>,
+    document.getElementById('app')
+);
+------------------------------------------组件组合和通信-------
+//组建常用的2种组合方式
+class Component1 extends React.Component {
+  constructor(props){
+    super(props)
+  }
+    render(){
+        return <h1>我是组件1,我接收了父组件传递给我的数据{this.props.name}</h1>
+    }
+}
+
+class Component2 extends React.Component {
+    render(){
+        return <h1>我是组件2</h1>
+    }
+}
+
+class App extends React.Component {
+    constructor(props) {
+      super(props);
+     } 
+    render(){
+        return (
+           <div>
+             <Component1 name="scott"/>
+             <hr/>
+             <Component2/>
+           </div>  
+        )
+    }
+}
+ReactDOM.render(
+       <App/>,
+    document.getElementById('app')
+);
+
+
+--------------------------组件组合2---------
+//组建常用的2种组合方式
+class Component1 extends React.Component {
+  constructor(props){
+    super(props)
+  }
+    render(){
+        return <h1>我是组件1,我接收了父组件传递给我的数据{this.props.name}</h1>
+    }
+}
+//单纯的组件
+class Component2 extends React.Component {
+    render(){
+        return <h1>我是组件2，我可以使用constructor里this.state里的数据来初始化自己</h1>
+    }
+}
+//容器式组件
+class Component3 extends React.Component {
+    render(){
+        return <h1>{this.props.children}</h1>
+    }
+}
+
+class App extends React.Component {
+    constructor(props) {
+      super(props);
+     } 
+    render(){
+        return (
+           <div>
+             <Component1 name="scott"/>
+             <hr/>
+             <Component2/>
+             <hr/>
+             <Component3>
+               <h3>我是组件3，通过在组件内部声明this.props.children的声明，我可以变成双标签的形式，被其他组件随便引用，内部的东西随便写</h3>
+               <a href="">我写个a连接试试吧</a>
+             </Component3>
+           </div>  
+        )
+    }
+}
+ReactDOM.render(
+       <App/>,
+    document.getElementById('app')
+);
+--------------------------子组件改变父组件数据--------
+//组建常用的2种组合方式
+class Child extends React.Component {
+  constructor(props){
+    super(props)
+  }
+  handleClick(){
+    this.props.changeColor('pink')
+  }
+    render(){
+        return (
+             <div>
+               <h1>我是子组件,我接收到父组件传递给我的数据（父组件的背景色为）:{this.props.bgColor}</h1>
+               <button onClick={(e)=>{this.handleClick(e)}}>改变父组件的颜色</button>
+             </div>
+          )
+    }
+}
+
+
+class Father extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state={
+        bgColor:'#ccc'
+      }
+     } 
+     onChangeColor(color){
+      this.setState({
+        bgColor:color
+      })
+     }
+    render(){
+        return (
+           <div style={{background:this.state.bgColor}}>
+             <h3>我是父组件，接下来我要演示如何通过子组件向父组件传递数据</h3>
+             <ul>
+              <li>首先，要在父组件中要定义需onChange的方法setState</li>
+               <li>接着，向子组件Child里传递了该数据和该回调方法，接下来子组件就可以用this.props来获取变量和调用父组件的方法</li>
+             </ul>
+             <Child bgColor={this.state.bgColor} changeColor={(color)=>{this.onChangeColor(color)}}/>
+           </div>  
+        )
+    }
+}
+ReactDOM.render(
+       <Father/>,
+    document.getElementById('app')
+);
+---------------------------------父往子props，通过回调从子往父传数据--------------
+
+//兄弟组件数据传递
+class Child1 extends React.Component {
+  handleClick(){
+    this.props.changeChild2BgColor('yellow')
+  }
+  render(){
+    return (
+         <div>
+           <h1>我是子组件1,我将通过下面的按钮改变Child2的背景颜色:{this.props.Child2BgColor}</h1>
+           <button onClick={(e)=>{this.handleClick(e)}}>change child2's color</button>
+         </div>
+      )
+  }
+}
+
+
+class Child2 extends React.Component {
+  constructor(props){
+    super(props)
+  }
+  render(){
+    return <h1 style={{background:this.props.bgColor}}>我是子组件2,我的背景色颜色为{this.props.bgColor}</h1>
+  }
+}
+
+class App extends React.Component {
+   constructor(props){
+    super(props)
+    this.state={
+      Child2BgColor:'#999'
+    }
+   }
+  onChangeChild2BgColor(color){
+      this.setState({
+        Child2BgColor: color 
+      })
+  }
+   render(){
+     return(
+        <div>
+          <Child1 changeChild2BgColor={(color)=>{this.onChangeChild2BgColor(color)}}/>
+          <Child2 bgColor={this.state.Child2BgColor}/>
+        </div>
+     )
+   }
+}
+ReactDOM.render(
+       <App/>,
+    document.getElementById('app')
+);
+------------------------------------life circle------------------
+
+class App extends React.Component {
+   constructor(props){
+    super(props)
+    this.state={
+      data:"old state"
+    }
+     console.log('初始化数据，constructor')
+    }
+   //组件渲染前，可以放一些一步的回调
+   componentWillMount() {
+     console.log('componentWillMount');
+   };
+   //组件加载完成
+   componentDidMount() {
+     console.log('componentDidMount')
+   }
+   componentWillReceiveProps() {
+     console.log('componentWillReceiveProps')
+   }
+   //组件是否需要更新，有返回值默认为true，只要数据变化，就更新
+   shouldComponentUpdate() {
+     console.log('shouldComponentUpdate')
+     return true;
+   }
+   //组件将要更新
+   componentWillUpdate() {
+     console.log('componentWillUpdate')
+   }
+   //组件更新完成
+   componentDidUpdate() {
+     console.log('componentDidUpdate')
+   }
+   onClickHandle(){
+    console.log('更新数据：')
+    this.setState({
+      data:"new state"
+    })
+   }
+   render(){
+    console.log('render')
+    return (
+        <div>
+          <h1>hello world</h1>
+          <button onClick={()=>{this.onClickHandle()}}>更新state</button>
+        </div>
+      )
+   }
+}
+ReactDOM.render(
+       <App/>,
+    document.getElementById('app')
+);
+---------------------------------------路由------
+页面路由：window.location.href="https://www.baidu.com" 完全刷新
+Hash路由：
