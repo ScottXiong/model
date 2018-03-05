@@ -92,6 +92,6 @@ module.exports = {
   ],
   devServer: {
      port:8989,
-     // contentBase: './dist/'
+     contentBase: './dist/'
    }
 };

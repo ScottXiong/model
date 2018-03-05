@@ -20,6 +20,9 @@ import Php from './pages/php/index.jsx'
 import Tools from './pages/tools/index.jsx'
 import Plugins from './pages/plugins/index.jsx'
 import English from './pages/english/index.jsx'
+import Html from './pages/html/index.jsx'
+import Js from './pages/Js/index.jsx'
+import Css from './pages/css/index.jsx'
 
 
 //life circle
@@ -52,7 +55,7 @@ class App extends React.Component {
    constructor(props){
        super(props)
        this.state={
-        categery:['Angular','Vue','Reacts','Jquery','Bootstrap','Cplus','Node','Databse','Java','Php','Tools','Plugins','English']
+        category:['Angular','Vue','React','Html','Js','Css','Jquery','Bootstrap','C++','Node','Databse','Java','Php','Tools','Plugins','English']
        }
    }
    render(){
@@ -67,43 +70,27 @@ class App extends React.Component {
              <div id="list">
                 
                        {
-                          this.state.categery.map((name,index)=><Link key={index} to={`/${name}`} style={{marginLeft:'30px'}}>{name}</Link>)
+                          this.state.category.map((name,index)=><Link key={index} to={`/${name}`} style={{marginLeft:'30px'}}>{name}</Link>)
                        }
              </div>
-             <div className="row">
-                   <div className='left col-md-2 col-xs-6'>
-                    
-                       {
-                          this.state.categery.map((name,index)=><Link key={index} to={`/${name}`} style={{display:'block',fontSize:'20px',padding:'3px'
-                            ,marginLeft:'30px'}}>{name}</Link>)
-                       }
-                    
-                     <Link to={`/g/id`}>
-                       带参数的跳转
-                     </Link>
-                      <Link to={`/`}>
-                       不带参数的跳转a
-                     </Link>
-                   </div>
-                   <div className='right col-md-9 col-xs-6'>
-                     <A>
-                       {
-                          this.state.categery.map((name,index)=><Route key={index} path={`/${name}`} component={name}/>)
-                       }
-                    
-                      <Route exact={true} path='/' render={()=>(
-                        <div>
-                         <ul>
-                           <li>apple</li>
-                           <li>pera</li>
-                           <Angular/>
-                         </ul>
-                        </div>
-                        )} />
-                      <Route path='/g/:id' component={D}/>
-                    </A>      
-                   </div>
-             </div>
+             <A>
+               <Route path='/angular' component={Angular}/>
+               <Route path='/vue' component={Vue}/>
+               <Route path='/React' component={Reacts}/>
+               <Route path='/html' component={Html}/>
+               <Route path='/css' component={Css}/>
+               <Route path='/js' component={Js}/>
+               <Route path='/jquery' component={Jquery}/>
+               <Route path='/bootstrap' component={Bootstrap}/>
+               <Route path='/c++' component={Cplusplus}/>
+               <Route path='/node' component={Node}/>
+               <Route path='/databse' component={Database}/>
+               <Route path='/java' component={Java}/>
+               <Route path='/php' component={Php}/>
+               <Route path='/tools' component={Tools}/>
+               <Route path='/plugins' component={Plugins}/>
+               <Route path='/english' component={English}/>
+            </A>      
            </div>
          </div>
        </HashRouter>          
